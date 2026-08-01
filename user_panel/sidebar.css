@@ -1,0 +1,104 @@
+/* PROFILE BOX */
+.profile-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.avatar {
+    width: 45px;
+    height: 45px;
+    background: #f57847;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.info h5 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.info small {
+    color: gray;
+}
+
+body {
+    background: #f5f6fa;
+    margin: 0;
+}
+
+/* SIDEBAR */
+.sidebar {
+    background: #fff;
+    height: 100vh;
+    width: 260px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    box-shadow: 0 0 15px rgba(0,0,0,0.08);
+    transition: 0.3s;
+    z-index: 1000;
+}
+
+.sidebar-inner {
+    padding: 20px;
+}
+
+.brand {
+    color: #f57847;
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 12px;
+    margin-bottom: 8px;
+    color: #333;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.sidebar a i {
+    margin-right: 8px;
+}
+
+
+
+/* MAIN */
+.main-content {
+    margin-left: 260px;
+    padding: 20px;
+}
+
+/* MOBILE */
+.toggle-btn {
+    display: none;
+    font-size: 24px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+@media(max-width:768px){
+    .sidebar {
+        left: -260px;
+    }
+
+    .sidebar.show {
+        left: 0;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .toggle-btn {
+        display: block;
+    }
+}
