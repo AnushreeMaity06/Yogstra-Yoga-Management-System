@@ -588,6 +588,70 @@ margin-bottom:15px;
 
 </div>
 
+<div class="feedback-section mt-5">
+
+    <div class="feedback-header">
+        <h2>Class Feedback</h2>
+
+        <p>
+            Share your experience with this yoga class.
+        </p>
+    </div>
+
+    <?php if (isset($_GET['feedback']) && $_GET['feedback'] == 'success') { ?>
+
+        <div class="alert alert-success">
+            Your feedback has been submitted successfully.
+        </div>
+
+    <?php } ?>
+
+    <?php if (isset($feedback_error)) { ?>
+
+        <div class="alert alert-danger">
+            <?php echo htmlspecialchars($feedback_error); ?>
+        </div>
+
+    <?php } ?>
+
+
+    <!-- Feedback Form -->
+
+    <div class="feedback-form-card">
+
+        <form method="POST">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Your Feedback
+                </label>
+
+                <textarea
+                    name="message"
+                    class="form-control"
+                    rows="4"
+                    placeholder="Share your experience with this class..."
+                    required></textarea>
+
+            </div>
+
+            <button
+                type="submit"
+                name="submit_class_feedback"
+                class="feedback-submit-btn">
+
+                <i class="fa-solid fa-paper-plane"></i>
+                Submit Feedback
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
 
 
 
