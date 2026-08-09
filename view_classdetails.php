@@ -1,5 +1,7 @@
 <?php
 
+
+
 global $conn;
 
 session_start();
@@ -7,170 +9,223 @@ session_start();
 include 'db_connect.php';
 
 
-// ========================================
-// CHECK CLASS ID
-// ========================================
+/* =========================================
+   CHECK CLASS ID
+========================================= */
 
 if (!isset($_GET['id'])) {
+
     die("Class ID not found");
+
 }
 
 $id = (int) $_GET['id'];
 
 
-// ========================================
-// GET CLASS DETAILS
-// ========================================
+/* =========================================
+   GET CLASS DETAILS
+========================================= */
 
-$query = "SELECT * FROM classes WHERE id='$id'";
+$query = "SELECT * FROM classes WHERE id = '$id'";
 
 $result = mysqli_query($conn, $query);
 
 if (!$result) {
+
     die("Database Error : " . mysqli_error($conn));
+
 }
 
 $row = mysqli_fetch_assoc($result);
 
 if (!$row) {
+
     die("Class not found");
+
 }
 
 
-// ========================================
-// CHECK USER LOGIN
-// ========================================
-
-if (!isset($_SESSION['user_id'])) {
-
-    header("Location: login.php");
-    exit;
-}
-
-$user_id = (int) $_SESSION['user_id'];
-
-
-// ========================================
-// FEEDBACK ERROR
-// ========================================
+/* =========================================
+   SUBMIT CLASS FEEDBACK
+========================================= */
 
 $feedback_error = "";
 
-
-// ========================================
-// SUBMIT FEEDBACK
-// ========================================
-
 if (isset($_POST['submit_class_feedback'])) {
 
-    $message = trim($_POST['message']);
 
+    /* CHECK USER LOGIN */
 
-    if (empty($message)) {
+    if (!isset($_SESSION['user_id'])) {
 
-        $feedback_error = "Please write your feedback.";
+        $feedback_error = "Please login first to submit feedback.";
+
     } else {
 
 
-        // Get logged-in user's information
+        $user_id = (int) $_SESSION['user_id'];
 
-        $user_query = mysqli_query(
-            $conn,
-            "SELECT name, email, image
-             FROM users
-             WHERE id='$user_id'"
-        );
+        $message = trim($_POST['message'] ?? '');
 
 
-        if (
-            $user_query &&
-            mysqli_num_rows($user_query) > 0
-        ) {
+        /* CHECK MESSAGE */
 
-            $user = mysqli_fetch_assoc($user_query);
+        if ($message == "") {
 
+            $feedback_error = "Please enter your feedback.";
 
-            $name = $user['name'];
-
-            $email = $user['email'];
-
-            $image = $user['image'] ?? '';
-
-            $member_since = date('Y');
-
-
-            // ========================================
-            // INSERT FEEDBACK
-            // ========================================
-
-            $stmt = mysqli_prepare(
-                $conn,
-                "INSERT INTO feedback
-                (
-                    name,
-                    email,
-                    image,
-                    message,
-                    member_since,
-                    user_id,
-                    class_id,
-                    type
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, 'class')"
-            );
-
-
-            mysqli_stmt_bind_param(
-                $stmt,
-                "sssssii",
-                $name,
-                $email,
-                $image,
-                $message,
-                $member_since,
-                $user_id,
-                $id
-            );
-
-
-            if (mysqli_stmt_execute($stmt)) {
-
-                header(
-                    "Location: viewclassdetails.php?id="
-                        . $id
-                        . "&feedback=success"
-                );
-
-                exit;
-            } else {
-
-                $feedback_error =
-                    "Something went wrong. Please try again.";
-            }
-
-
-            mysqli_stmt_close($stmt);
         } else {
 
-            $feedback_error =
-                "User information not found.";
+
+            /* GET USER DETAILS */
+
+            $user_query = "
+                SELECT name, email, image
+                FROM users
+                WHERE id = '$user_id'
+                LIMIT 1
+            ";
+
+            $user_result = mysqli_query($conn, $user_query);
+
+
+            if (!$user_result) {
+
+                $feedback_error =
+                    "User data error: " . mysqli_error($conn);
+
+            } else {
+
+
+                $user = mysqli_fetch_assoc($user_result);
+
+
+                if (!$user) {
+
+                    $feedback_error = "User not found.";
+
+                } else {
+
+
+                    $name = mysqli_real_escape_string(
+                        $conn,
+                        $user['name']
+                    );
+
+                    $email = mysqli_real_escape_string(
+                        $conn,
+                        $user['email']
+                    );
+
+                    $image = mysqli_real_escape_string(
+                        $conn,
+                        $user['image'] ?? ''
+                    );
+
+                    $message = mysqli_real_escape_string(
+                        $conn,
+                        $message
+                    );
+
+
+                    /* MEMBER SINCE */
+
+                    $member_since = date('Y');
+
+
+                    /* INSERT FEEDBACK */
+
+                    $insert_query = "
+                        INSERT INTO feedback
+                        (
+                            name,
+                            email,
+                            image,
+                            message,
+                            member_since,
+                            user_id,
+                            class_id
+                        )
+                        VALUES
+                        (
+                            '$name',
+                            '$email',
+                            '$image',
+                            '$message',
+                            '$member_since',
+                            '$user_id',
+                            '$id'
+                        )
+                    ";
+
+
+                    if (mysqli_query($conn, $insert_query)) {
+
+
+                        /* REDIRECT */
+
+                        header(
+                            "Location: viewclassdetails.php?id=$id&feedback=success"
+                        );
+
+                        exit;
+
+
+                    } else {
+
+                        $feedback_error =
+                            "Feedback submit failed: "
+                            . mysqli_error($conn);
+
+                    }
+
+                }
+
+            }
+
         }
+
     }
+
 }
 
 
-// ========================================
-// GET FEEDBACK FOR THIS CLASS
-// ========================================
+/* =========================================
+   GET PREVIOUS FEEDBACK FOR THIS CLASS
+========================================= */
 
-$feedback_query = mysqli_query(
+$feedback_query = "
+    SELECT
+        id,
+        name,
+        email,
+        image,
+        message,
+        member_since,
+        created_at,
+        user_id,
+        class_id
+    FROM feedback
+    WHERE class_id = '$id'
+    ORDER BY created_at DESC
+";
+
+
+$feedback_result = mysqli_query(
     $conn,
-    "SELECT *
-     FROM feedback
-     WHERE class_id='$id'
-     AND type='class'
-     ORDER BY created_at DESC"
+    $feedback_query
 );
+
+
+if (!$feedback_result) {
+
+    die(
+        "Feedback Query Error : "
+        . mysqli_error($conn)
+    );
+
+}
+
 
 ?>
 
