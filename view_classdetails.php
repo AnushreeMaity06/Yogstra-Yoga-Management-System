@@ -661,7 +661,7 @@ $feedback_query = mysqli_query(
 <body>
     <?php include('navbar.php'); ?>
 
- <div class="class-page-row">
+ <div class="class-page-row p-4">
 
     <!-- LEFT: CLASS DETAILS -->
     <div class="class-details-column">
