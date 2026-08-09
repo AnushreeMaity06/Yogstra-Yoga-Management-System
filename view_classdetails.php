@@ -253,7 +253,7 @@ margin-bottom:15px;
 
 </head>
 <body>
-
+<?php include('navbar.php'); ?>
 
 <div class="container mt-5 mb-5">
 
