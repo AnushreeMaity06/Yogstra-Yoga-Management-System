@@ -245,7 +245,139 @@ border-radius:18px;
 margin-bottom:15px;
 
 }
+.feedback-section {
+    max-width: 1000px;
+    margin: 50px auto;
+}
 
+.feedback-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.feedback-header h2,
+.feedback-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 600;
+    color: #2c2c2c;
+}
+
+.feedback-header p,
+.feedback-subtitle {
+    font-family: 'Poppins', sans-serif;
+    color: #666;
+    font-size: 15px;
+}
+
+.feedback-form-card {
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    margin-bottom: 35px;
+}
+
+.feedback-form-card label {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: #444;
+}
+
+.feedback-form-card textarea {
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    resize: none;
+}
+
+.feedback-form-card textarea:focus {
+    border-color: #ba6a4a;
+    box-shadow: 0 0 0 0.15rem rgba(186,106,74,0.15);
+}
+
+.feedback-submit-btn {
+    background: #ba6a4a;
+    color: white;
+    border: none;
+    padding: 11px 22px;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.feedback-submit-btn:hover {
+    background: #a85d41;
+}
+
+.feedback-card {
+    background: #fff;
+    padding: 22px;
+    margin-bottom: 18px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+}
+
+.feedback-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.feedback-user img,
+.feedback-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.feedback-user img {
+    object-fit: cover;
+}
+
+.feedback-avatar {
+    background: #ba6a4a;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+}
+
+.feedback-user h5 {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: #2c2c2c;
+}
+
+.feedback-user small {
+    color: #888;
+    font-family: 'Poppins', sans-serif;
+}
+
+.feedback-message {
+    margin-top: 15px;
+    margin-bottom: 0;
+    font-family: 'Poppins', sans-serif;
+    color: #555;
+    line-height: 1.7;
+}
+
+.no-feedback {
+    text-align: center;
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    color: #777;
+}
+
+.no-feedback i {
+    font-size: 30px;
+    color: #ba6a4a;
+    margin-bottom: 10px;
+}
 
 
 </style>
