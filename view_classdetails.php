@@ -1,60 +1,44 @@
 <?php
 
 
-
 global $conn;
-
 session_start();
 
 include 'db_connect.php';
 
-
-/* =========================================
-   CHECK CLASS ID
-========================================= */
-
 if (!isset($_GET['id'])) {
-
     die("Class ID not found");
-
 }
 
 $id = (int) $_GET['id'];
 
 
-/* =========================================
+/* =========================
    GET CLASS DETAILS
-========================================= */
+========================= */
 
-$query = "SELECT * FROM classes WHERE id = '$id'";
+$query = "SELECT * FROM classes WHERE id='$id'";
 
 $result = mysqli_query($conn, $query);
 
 if (!$result) {
-
     die("Database Error : " . mysqli_error($conn));
-
 }
 
 $row = mysqli_fetch_assoc($result);
 
 if (!$row) {
-
     die("Class not found");
-
 }
 
 
-/* =========================================
-   SUBMIT CLASS FEEDBACK
-========================================= */
+/* =========================
+   SUBMIT FEEDBACK
+========================= */
 
 $feedback_error = "";
 
 if (isset($_POST['submit_class_feedback'])) {
-
-
-    /* CHECK USER LOGIN */
 
     if (!isset($_SESSION['user_id'])) {
 
@@ -62,50 +46,41 @@ if (isset($_POST['submit_class_feedback'])) {
 
     } else {
 
-
         $user_id = (int) $_SESSION['user_id'];
 
         $message = trim($_POST['message'] ?? '');
 
-
-        /* CHECK MESSAGE */
-
-        if ($message == "") {
+        if ($message == '') {
 
             $feedback_error = "Please enter your feedback.";
 
         } else {
 
-
-            /* GET USER DETAILS */
+            /* GET LOGGED-IN USER */
 
             $user_query = "
                 SELECT name, email, image
                 FROM users
-                WHERE id = '$user_id'
+                WHERE id='$user_id'
                 LIMIT 1
             ";
 
             $user_result = mysqli_query($conn, $user_query);
 
-
             if (!$user_result) {
 
                 $feedback_error =
-                    "User data error: " . mysqli_error($conn);
+                    "User query error: " . mysqli_error($conn);
 
             } else {
 
-
                 $user = mysqli_fetch_assoc($user_result);
-
 
                 if (!$user) {
 
                     $feedback_error = "User not found.";
 
                 } else {
-
 
                     $name = mysqli_real_escape_string(
                         $conn,
@@ -127,13 +102,10 @@ if (isset($_POST['submit_class_feedback'])) {
                         $message
                     );
 
-
-                    /* MEMBER SINCE */
-
                     $member_since = date('Y');
 
 
-                    /* INSERT FEEDBACK */
+                    /* INSERT */
 
                     $insert_query = "
                         INSERT INTO feedback
@@ -161,38 +133,28 @@ if (isset($_POST['submit_class_feedback'])) {
 
                     if (mysqli_query($conn, $insert_query)) {
 
-
-                        /* REDIRECT */
-
                         header(
-                            "Location: viewclassdetails.php?id=$id&feedback=success"
+                            "Location: view_classdetails.php?id=$id&feedback=success"
                         );
 
                         exit;
-
 
                     } else {
 
                         $feedback_error =
                             "Feedback submit failed: "
                             . mysqli_error($conn);
-
                     }
-
                 }
-
             }
-
         }
-
     }
-
 }
 
 
-/* =========================================
-   GET PREVIOUS FEEDBACK FOR THIS CLASS
-========================================= */
+/* =========================
+   GET CLASS FEEDBACK
+========================= */
 
 $feedback_query = "
     SELECT
@@ -206,10 +168,12 @@ $feedback_query = "
         user_id,
         class_id
     FROM feedback
-    WHERE class_id = '$id'
+    WHERE class_id='$id'
     ORDER BY created_at DESC
 ";
 
+
+/* VERY IMPORTANT */
 
 $feedback_result = mysqli_query(
     $conn,
@@ -223,7 +187,6 @@ if (!$feedback_result) {
         "Feedback Query Error : "
         . mysqli_error($conn)
     );
-
 }
 
 
@@ -956,12 +919,12 @@ if (!$feedback_result) {
                 <?php
 
                 if (
-                    $feedback_query &&
-                    mysqli_num_rows($feedback_query) > 0
+                    $feedback_result &&
+                    mysqli_num_rows($feedback_result) > 0
                 ) {
 
                     while (
-                        $feedback = mysqli_fetch_assoc($feedback_query)
+                        $feedback = mysqli_fetch_assoc($feedback_result)
                     ) {
 
                 ?>
