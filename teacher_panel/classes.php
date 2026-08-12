@@ -4,11 +4,12 @@ include '../db_connect.php';
 global $conn;
 
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id'])|| $_SESSION['role'] != 'teacher') {
   header("Location: ../login.php");
   exit;
 }
 $user_id = $_SESSION['user_id'];
+$teacher_name = $_SESSION['user_name'];
 
 // Pagination
 $limit = 5; // per page data
@@ -26,6 +27,7 @@ $total_result = $conn->query("
 SELECT COUNT(id) AS total
 FROM classes
 WHERE created_by='$user_id'
+OR instructor='$teacher_name'
 ");
 
 $total_row = $total_result->fetch_assoc();
@@ -40,7 +42,9 @@ $total_pages = ceil($total_records / $limit);
 $result = $conn->query("
 SELECT *
 FROM classes
-WHERE created_by='$user_id'order by id DESC 
+WHERE created_by='$user_id' 
+OR instructor='$teacher_name'
+order by id DESC 
 LIMIT $start,$limit
 ");
 ?>

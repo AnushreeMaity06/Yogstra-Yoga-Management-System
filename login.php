@@ -149,7 +149,7 @@ body {
         <button type="button" class="role-btn" onclick="setRole('teacher', this)">Teacher</button>
     </div>
 
-    <form action="Form_action.php" method="POST">
+    <form action="form_action.php" method="POST">
 
         <!-- hidden role -->
         <input type="hidden" name="role" id="role" value="student">
