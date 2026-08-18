@@ -12,8 +12,11 @@ if (isset($_POST['submit'])) {
     $instructor = $_SESSION['user_name'];
 
     $level = $_POST['level'];
-    $description = $_POST['description'];
-    $benefits = $_POST['benefits'];
+    // $description = $_POST['description'];
+    // $benefits = $_POST['benefits'];
+
+    $description = mysqli_real_escape_string($conn, $_POST['description']);
+    $benefits = mysqli_real_escape_string($conn, $_POST['benefits']);
 
     $duration = $_POST['duration'];
     $price = $_POST['price'];

@@ -34,8 +34,11 @@ if (isset($_POST['submit'])) {
     $start_time = $_POST['start_time'];
     $end_time = $_POST['end_time'];
 
-    $description = $_POST['description'];
-    $benefits = $_POST['benefits'];
+    // $description = $_POST['description'];
+    // $benefits = $_POST['benefits'];
+
+    $description = mysqli_real_escape_string($conn, $_POST['description']);
+$benefits = mysqli_real_escape_string($conn, $_POST['benefits']);
 
 
     /*
