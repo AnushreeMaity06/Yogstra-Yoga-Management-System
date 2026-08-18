@@ -5,14 +5,32 @@ include('../db_connect.php');
 
 $teacher_id = $_SESSION['user_id'];
 
+// $sql = "SELECT
+//             booking.*,
+//             classes.name AS class_name,
+//             users.name AS student_name
+//         FROM booking
+//         INNER JOIN classes ON booking.class_id = classes.id
+//         INNER JOIN users ON booking.user_id = users.id
+//         WHERE classes.created_by = '$teacher_id'
+//         ORDER BY booking.id DESC";
+
+// $result = mysqli_query($conn, $sql);
+
+
 $sql = "SELECT
             booking.*,
             classes.name AS class_name,
+            classes.schedule_date,
+            classes.start_time,
+            classes.end_time,
             users.name AS student_name
         FROM booking
-        INNER JOIN classes ON booking.class_id = classes.id
-        INNER JOIN users ON booking.user_id = users.id
-        WHERE classes.created_by = '$teacher_id'
+        INNER JOIN classes
+            ON booking.class_id = classes.id
+        INNER JOIN users
+            ON booking.user_id = users.id
+        WHERE classes.teacher_id = '$teacher_id'
         ORDER BY booking.id DESC";
 
 $result = mysqli_query($conn, $sql);
