@@ -28,7 +28,7 @@ if (isset($_POST['submit'])) {
     '$schedule_date', '$start_time', '$end_time', 'Active', '$created_by',$teacher_id)
     ");
 
-    header("Location: myclasses_user.php");
+    header("Location: classes.php");
     exit();
 }
 ?>
