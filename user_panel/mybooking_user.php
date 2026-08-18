@@ -279,17 +279,13 @@ $active = 'mybooking_user';
                       </td>
 
                       <td>
-                        <div class="d-flex gap-2 flex-wrap">
-
-                          <button class="edit-btn">
-                            <i class="fa fa-pen"></i> Edit
-                          </button>
+                        
 
                           <button class="delete-btn">
                             <i class="fa fa-trash"></i>
                           </button>
 
-                        </div>
+                       
                       </td>
 
                     </tr>

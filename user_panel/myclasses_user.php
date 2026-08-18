@@ -84,7 +84,7 @@ $result = $conn->query($sql);
             padding: 20px;
             transition: .3s;
             box-shadow: 0 5px 20px rgba(0, 0, 0, .08);
-            width: 500px;
+            width: 100%;
         }
 
         .class-card:hover {
@@ -244,7 +244,7 @@ $result = $conn->query($sql);
 
                                     <?php while ($row = $result->fetch_assoc()) { ?>
 
-                                        <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                                        <div class="col-xl-4 col-lg-4 col-md-6 col-12">
 
                                             <div class="class-card">
 
