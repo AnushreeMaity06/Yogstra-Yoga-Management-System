@@ -16,14 +16,16 @@ if (isset($_POST['submit'])) {
     $start_time = $_POST['start_time'];
     $end_time = $_POST['end_time'];
 
+    $teacher_id=$_SESSION['user_id'];
+
     $created_by = $_SESSION['user_id'];
 
     $conn->query("
     INSERT INTO classes
-    (name, instructor, level, description, duration, price, schedule_date, start_time, end_time, status, created_by)
+    (name, instructor, level, description, duration, price, schedule_date, start_time, end_time, status, created_by,teacher_id)
     VALUES
     ('$name', '$instructor', '$level', '$description', '$duration', '$price',
-    '$schedule_date', '$start_time', '$end_time', 'Active', '$created_by')
+    '$schedule_date', '$start_time', '$end_time', 'Active', '$created_by',$teacher_id)
     ");
 
     header("Location: myclasses_user.php");
