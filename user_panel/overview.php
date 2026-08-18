@@ -5,6 +5,19 @@ global $conn;
 session_start();
 
 $active = 'overview';
+$user_id = $_SESSION['user_id'];
+
+$sql = "SELECT COUNT(*) AS total_bookings 
+        FROM booking 
+        WHERE user_id = $user_id";
+
+$result = $conn->query($sql);
+$total_bookings = 0;
+
+if ($result) {
+    $row = $result->fetch_assoc();
+    $total_bookings = $row['total_bookings'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -176,7 +189,21 @@ $active = 'overview';
 
                     <div class="row mt-4 g-4">
 
+<div class="col-lg-4 col-md-6">
+    <div class="card-custom">
+        <div class="icon-box">
+            <i class="fa-solid fa-calendar-check"></i>
+        </div>
 
+        <h6>Total Booked Classes</h6>
+
+        <h2><?php echo $total_bookings; ?></h2>
+
+        <p class="text-muted mb-0">
+            Classes you have booked
+        </p>
+    </div>
+</div>
                         <!-- Recent Bookings
                 <div class="col-lg-6">
                     <div class="section-card">
