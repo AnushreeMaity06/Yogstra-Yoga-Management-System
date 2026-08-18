@@ -43,6 +43,7 @@ if ($result) {
         body {
             /* background: #f8f3f1; */
             overflow-x: hidden;
+            background:#f57847;
         }
 
         .main-card {

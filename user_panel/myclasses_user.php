@@ -125,6 +125,7 @@ $result = $conn->query($sql);
             font-family: Georgia, serif;
             font-weight: 700;
             margin-bottom: 12px;
+            color:#1d1d1d;
         }
 
         .class-info {
