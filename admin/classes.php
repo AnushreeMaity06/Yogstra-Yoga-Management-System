@@ -371,7 +371,7 @@ $result = $conn->query("SELECT * FROM classes LIMIT $start, $limit");
                       <a href="edit_class.php?id=<?php echo $row['id']; ?>"
                         class="edit-btn">
 
-                        <i class="fa fa-pen"></i> Edit
+                        <i class="fa fa-pen"></i>
 
                       </a>
 
