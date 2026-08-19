@@ -452,7 +452,7 @@
                      <header class="d-flex justify-content-between align-items-center mb-5">
                          <h1 class="journal-title h2 m-0">The Wellness Journal</h1>
 
-                         <a href="#" class="explore-link">Explore All Insights</a>
+                         <!-- <a href="#" class="explore-link">Explore All Insights</a> -->
                      </header>
 
                      <main class="blog-scroll">

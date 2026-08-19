@@ -80,6 +80,14 @@ $total_students = $student_data['total_students'];
 $teacher_query= mysqli_query($conn, "SELECT COUNT(*) AS total_teachers FROM users where role='teacher'");
 $teacher_data = mysqli_fetch_assoc($teacher_query);
 $total_teachers = $teacher_data['total_teachers'];
+// Total Revenue
+$revenue_query = mysqli_query(
+    $conn,
+    "SELECT COALESCE(SUM(total_price), 0) AS total_revenue FROM booking"
+);
+
+$revenue_data = mysqli_fetch_assoc($revenue_query);
+$total_revenue = $revenue_data['total_revenue'];
 ?>
                 <div class="col-md-3">
                     <div class="card card-custom p-3">
@@ -88,19 +96,49 @@ $total_teachers = $teacher_data['total_teachers'];
                         <small class="text-success">+5%</small>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <!-- <div class="col-md-3">
                     <div class="card card-custom p-3">
                         <h6>Revenue</h6>
                         <h3>$4,280</h3>
                         <small class="text-success">+18%</small>
                     </div>
-                </div>
+                </div> -->
+                <div class="col-md-3"> 
+    <div class="card card-custom p-3"> 
+        <h6>Total Revenue</h6> 
+
+        <h3>
+            ₹<?php echo number_format($total_revenue, 2); ?>
+        </h3> 
+
+        <small class="text-success">
+            From Bookings
+        </small>
+    </div> 
+</div>
+<?php
+
+$booking_query = mysqli_query(
+    $conn,
+    "SELECT COUNT(*) AS total_bookings FROM booking"
+);
+
+$booking_data = mysqli_fetch_assoc($booking_query);
+$total_bookings = $booking_data['total_bookings'];
+?>
                 <div class="col-md-3">
-                    <div class="card card-custom p-3">
-                        <h6>Rating</h6>
-                        <h3>4.8 ⭐</h3>
-                    </div>
-                </div>
+    <div class="card card-custom p-3">
+        <h6>Total Bookings</h6>
+
+        <h3>
+            <?php echo $total_bookings; ?>
+        </h3>
+
+        <small class="text-success">
+            Total Class Bookings
+        </small>
+    </div>
+</div>
             </div>
 
             <!-- Tables -->

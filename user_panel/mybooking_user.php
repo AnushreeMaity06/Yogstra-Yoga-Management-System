@@ -218,9 +218,9 @@ $active = 'mybooking_user';
               <i class="fa fa-calendar-check"></i> Booking Management
             </h2>
 
-            <button class="reminder-btn">
+            <!-- <button class="reminder-btn">
               <i class="fa fa-envelope"></i> Send Reminder
-            </button>
+            </button> -->
 
           </div>
 

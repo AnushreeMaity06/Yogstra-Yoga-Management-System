@@ -2,6 +2,23 @@
 session_start();
 
 
+
+
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])) {
+    $getStartedLink = "user_panel/overview.php";
+} else {
+    $getStartedLink = "login.php";
+}
+
+
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -269,6 +286,197 @@ session_start();
 
 .blog-card-wrapper {
     flex: 0 0 calc(50% - 10px); /* প্রতি row-তে 2টা card */
+}
+/* ==============================
+   YOGSTRA PREMIUM FOOTER
+================================ */
+
+.yogstra-footer {
+    background:  #ba6a4a;
+    color: #fffefe;
+    padding: 70px 0 0;
+    margin-top: 80px;
+}
+
+
+/* Brand */
+
+.footer-logo {
+    width: 140px;
+    height: 55px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.footer-description {
+    max-width: 420px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #ffffff;
+    margin-bottom: 25px;
+}
+
+
+/* Social Icons */
+
+.footer-social {
+    display: flex;
+    gap: 10px;
+}
+
+.social-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #ba6a4a;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: 0.3s ease;
+}
+
+.social-btn:hover {
+    background: #d48768;
+    color: white;
+    transform: translateY(-4px);
+}
+
+
+/* Headings */
+
+.footer-heading {
+    font-family: 'Playfair Display', serif;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 22px;
+}
+
+
+/* Links */
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: #ffffff;
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    transition: 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #d48768;
+    padding-left: 5px;
+}
+
+
+/* Contact */
+
+.footer-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fefefe;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+}
+
+.contact-icon {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 50%;
+    background: rgba(186, 106, 74, 0.18);
+    color: #d48768;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Bottom */
+
+.footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: 55px;
+    padding: 22px 0;
+}
+
+.copyright {
+    margin: 0;
+    color: #f8f7f7;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.made-with {
+    color: #fefefe;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.made-with i {
+    color: #fc4c07;
+    margin: 0 4px;
+}
+
+
+/* ==============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 768px) {
+
+    .yogstra-footer {
+        padding: 50px 0 0;
+        text-align: center;
+    }
+
+    .footer-description {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .footer-social {
+        justify-content: center;
+    }
+
+    .footer-heading {
+        margin-top: 10px;
+    }
+
+    .contact-item {
+        justify-content: center;
+    }
+
+    .footer-bottom {
+        margin-top: 35px;
+    }
+
+    .footer-bottom .text-md-end {
+        text-align: center !important;
+        margin-top: 8px;
+    }
+
 }
 
 @media (max-width: 768px) {
@@ -768,11 +976,11 @@ session_start();
                   <?= $row['feature3']; ?>
                 </p>
 
-                <a href="login.php"
-                  class="button"
-                  style="text-decoration:none;">
-                  Get Started
-                </a>
+                <a href="<?php echo $getStartedLink; ?>"
+   class="button"
+   style="text-decoration:none;">
+   Get Started
+</a>
 
               </div>
 
@@ -852,7 +1060,7 @@ session_start();
   <div class="container py-5">
     <header class="d-flex justify-content-between align-items-center mb-5">
       <h1 class="journal-title h2 m-0">The Wellness Journal</h1>
-      <a href="#" class="explore-link">Explore All Insights</a>
+      <!-- <a href="#" class="explore-link">Explore All Insights</a> -->
     </header>
 
     <div class="blog-scroll">
@@ -937,59 +1145,208 @@ session_start();
           </script>";
   } ?>
 
-  <footer class="py-4 border-top">
+  <!-- ================= PREMIUM FOOTER ================= -->
+
+<footer class="yogstra-footer">
+
     <div class="container">
 
-      <div class="row g-4">
+        <div class="row gy-5">
 
-        <!-- Brand -->
-        <div class="col-12 col-md-4 text-center text-md-start">
-          <span class="footer-brand d-block mb-1"> <img src="assets/image/f4faab5c-a29f-4582-8c93-6be2c62fee75.jpeg" style="width:128px;height:50px;margin-bottom:0px;">
-          </span>
-          <span>&copy; 2024 Yogstra Wellness. All rights reserved.</span>
+            <!-- Brand & About -->
+            <div class="col-lg-5 col-md-6">
+
+                <div class="footer-brand-box">
+
+                    <img src="assets/image/f4faab5c-a29f-4582-8c93-6be2c62fee75.jpeg"
+                         class="footer-logo"
+                         alt="Yogstra">
+
+                    <p class="footer-description">
+                        At Yogstra, we believe yoga is more than a practice.
+                        It is a journey towards balance, mindfulness and a
+                        healthier way of living.
+                    </p>
+
+                    <div class="footer-social">
+
+                        <a href="#" class="social-btn">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+
+                        <a href="#" class="social-btn">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+
+                        <a href="#" class="social-btn">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+
+                        <a href="#" class="social-btn">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Quick Links -->
+            <div class="col-lg-2 col-md-6">
+
+                <h5 class="footer-heading">
+                    Quick Links
+                </h5>
+
+                <ul class="footer-links">
+
+                    <li>
+                        <a href="index.php">Home</a>
+                    </li>
+
+                    <li>
+                        <a href="#aboutus">About Us</a>
+                    </li>
+
+                    <li>
+                        <a href="#services">Services</a>
+                    </li>
+
+                    <li>
+                        <a href="#pricing">Membership</a>
+                    </li>
+
+                    <li>
+                        <a href="#team">Our Teachers</a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- Support -->
+            <div class="col-lg-2 col-md-6">
+
+                <h5 class="footer-heading">
+                    Support
+                </h5>
+
+                <ul class="footer-links">
+
+                    <li>
+                        <a href="#">Privacy Policy</a>
+                    </li>
+
+                    <li>
+                        <a href="#">Terms of Service</a>
+                    </li>
+
+                    <li>
+                        <a href="#">Cookie Policy</a>
+                    </li>
+
+                    <li>
+                        <a href="#">Help Center</a>
+                    </li>
+
+                    <li>
+                        <a href="#">Contact Us</a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- Contact -->
+            <div class="col-lg-3 col-md-6">
+
+                <h5 class="footer-heading">
+                    Get In Touch
+                </h5>
+
+                <div class="footer-contact">
+
+                    <div class="contact-item">
+
+                        <div class="contact-icon">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+
+                        <span>
+                            Yogstra Wellness Center
+                        </span>
+
+                    </div>
+
+
+                    <div class="contact-item">
+
+                        <div class="contact-icon">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+
+                        <span>
+                            support@yogstra.com
+                        </span>
+
+                    </div>
+
+
+                    <div class="contact-item">
+
+                        <div class="contact-icon">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+
+                        <span>
+                            +91 98765 43210
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <!-- Feedback Form -->
-        <div class="col-12 col-md-5">
-          <h6 class="mb-2">Give Your Feedback</h6>
 
-          <form method="POST" enctype="multipart/form-data" class="footer-feedback-form">
+        <!-- Bottom Footer -->
 
+        <div class="footer-bottom">
 
+            <div class="row align-items-center">
 
-            <textarea name="message"
-              class="form-control mb-2"
-              placeholder="Your Feedback"
-              rows="2"
-              required></textarea>
+                <div class="col-md-6">
 
-            <button type="submit"
-              name="submit_feedback"
-              class="btn w-100 feedback-btn">
-              🌿 Submit Feedback
-            </button>
+                    <p class="copyright">
+                        © 2024 Yogstra Wellness.
+                        All rights reserved.
+                    </p>
 
-          </form>
+                </div>
 
+                <div class="col-md-6 text-md-end">
+
+                    <span class="made-with">
+                        Made with
+                        <i class="fa-solid fa-heart"></i>
+                        for a healthier life
+                    </span>
+
+                </div>
+
+            </div>
 
         </div>
 
-        <!-- Links -->
-        <div class="col-12 col-md-3 text-center text-md-end">
-          <a href="#" class="footer-link">Privacy Policy</a>
-          <a href="#" class="footer-link">Terms of Service</a>
-          <a href="#" class="footer-link">Cookie Policy</a>
-          <a href="#" class="footer-link">Contact Us</a>
-          <br><br>
-
-          <a href="#" class="footer-icon-btn"><i class="bi bi-share"></i></a>
-          <a href="#" class="footer-icon-btn"><i class="bi bi-envelope"></i></a>
-        </div>
-
-      </div>
     </div>
-  </footer>
 
+</footer>
 
 
 

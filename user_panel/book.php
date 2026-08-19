@@ -1,88 +1,140 @@
 <?php
 global $conn;
-session_start();
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 include('../db_connect.php');
 
-// echo "<pre>";
-// print_r($_SESSION);
-// echo "</pre>";
-// exit;
 
+// =====================================================
+// LOGIN CHECK
+// =====================================================
 
-
-// ===============login check==================
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 'student') {
-        header("Location: ../login.php");
-        exit;
+    header("Location: ../login.php");
+    exit;
 }
 
-// echo "Session User ID: " . $_SESSION['user_id'];
-// exit;
-// $class_id=$_GET['class_id'];
-// echo($class_id);
 
-if (isset($_GET['class_id'])) {
+// =====================================================
+// GET CLASS ID
+// =====================================================
 
-        $class_id = $_GET['class_id'];
-} else {
-
-        header("location:../index.php");
-        exit();
+if (!isset($_GET['class_id']) || empty($_GET['class_id'])) {
+    header("Location: ../index.php");
+    exit;
 }
 
-$sql = "SELECT * FROM `classes` where id='$class_id'";
+$class_id = intval($_GET['class_id']);
+
+
+// =====================================================
+// GET CLASS DETAILS
+// =====================================================
+
+$sql = "SELECT * FROM classes WHERE id = '$class_id' LIMIT 1";
+
 $result = mysqli_query($conn, $sql);
+
+if (!$result || mysqli_num_rows($result) == 0) {
+    die("Class not found.");
+}
+
 $row = mysqli_fetch_assoc($result);
 
 
+// =====================================================
+// BOOKING
+// =====================================================
+
 if (isset($_POST['book_btn'])) {
 
+    $user_id = intval($_SESSION['user_id']);
 
-        $user_id = $_SESSION['user_id'];
-        // echo $_SESSION['user_id'];
-        // exit();
-        // $user_id = $_SESSION['user_id'];
+    // Seats only comes from user
+    $seats = intval($_POST['seats']);
 
-        //     echo "User ID = ".$user_id;
-        //     echo "<br>";
-        //     echo "Class ID = ".$class_id;
-        //     exit;
+    // Safety check
+    if ($seats < 1) {
+        $msg = "Please select at least 1 seat.";
+    } else {
 
-        $date = $_POST['date'];
-        $time = $_POST['time'];
-        $seats = $_POST['seats'];
+        // =================================================
+        // CLASS DATE & TIME
+        // Automatically taken from classes table
+        // =================================================
 
-        $price_per_seat = $row['price'];
-$total_price = $price_per_seat * $seats;
+        $date = $row['schedule_date'];
+        $start_time = $row['start_time'];
+        $end_time = $row['end_time'];
+
+        /*
+         * Booking table has only one 'time' column,
+         * so we store:
+         *
+         * 10:00 AM - 11:00 AM
+         *
+         * If your time column is TIME type, use start_time only.
+         */
+
+        $time = $start_time;
 
 
-        $check = "SELECT * FROM `booking` WHERE user_id=$user_id AND class_id=$class_id";
+        // =================================================
+        // PRICE CALCULATION
+        // =================================================
+
+        $price_per_seat = floatval($row['price']);
+
+        $total_price = $price_per_seat * $seats;
+
+
+        // =================================================
+        // CHECK DUPLICATE BOOKING
+        // =================================================
+
+        $check = "SELECT * FROM booking
+                  WHERE user_id = '$user_id'
+                  AND class_id = '$class_id'";
+
         $check_result = mysqli_query($conn, $check);
 
-        if (mysqli_num_rows($check_result) > 0) {
-                $msg = "You already booked this class.";
+
+        if ($check_result && mysqli_num_rows($check_result) > 0) {
+
+            $msg = "You already booked this class.";
+
         } else {
 
+            // =================================================
+            // INSERT BOOKING
+            // =================================================
 
-               $sql = "INSERT INTO `booking`
-(`user_id`, `class_id`, `date`, `time`, `seats`, `total_price`)
-VALUES
-('$user_id', '$class_id', '$date', '$time', '$seats', '$total_price')";
-                $result = mysqli_query($conn, $sql);
+            $sql = "INSERT INTO booking
+                    (user_id, class_id, date, time, seats, total_price)
+                    VALUES
+                    ('$user_id',
+                     '$class_id',
+                     '$date',
+                     '$time',
+                     '$seats',
+                     '$total_price')";
 
-                // if($result){
-                //         $msg="Booking Successful";
-                // }
-                // else{
-                //         $msg="Booking failed";
-                // }
+            $insert_result = mysqli_query($conn, $sql);
 
-                if ($result) {
-                        $msg = "Booking Successful";
-                } else {
-                        die("Error: " . mysqli_error($conn));
-                }
+
+            if ($insert_result) {
+
+                $msg = "Booking Successful";
+
+            } else {
+
+                $msg = "Booking failed: " . mysqli_error($conn);
+            }
         }
+    }
 }
 ?>
 
@@ -91,441 +143,609 @@ VALUES
 
 <head>
 
-        <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-        <meta name="viewport"
-                content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-        <title>Book Yoga Class</title>
+    <title>Book Yoga Class</title>
 
-        <!-- Bootstrap -->
-        <link href="../assets/bootstrap/css/bootstrap.min.css"
-                rel="stylesheet">
 
-        <!-- Google Font -->
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-                rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="../assets/bootstrap/css/bootstrap.min.css"
+        rel="stylesheet">
 
-        <!-- Font Awesome -->
-        <link rel="stylesheet"
-                href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        <style>
-                * {
-                        margin: 0;
-                        padding: 0;
-                        box-sizing: border-box;
-                }
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
-                body {
 
-                        font-family: 'Poppins', sans-serif;
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-                        min-height: 100vh;
 
-                        display: flex;
+    <style>
 
-                        align-items: center;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-                        justify-content: center;
 
-                        padding: 15px;
+        body {
 
-                        background:
-                                linear-gradient(rgba(0, 0, 0, 0.65),
-                                        rgba(0, 0, 0, 0.65)),
-                                url('../assets/image/yoga1.jpg');
+            font-family: 'Poppins', sans-serif;
 
-                        background-size: cover;
-                        background-position: center;
-                }
+            min-height: 100vh;
 
-                .main-wrapper {
+            display: flex;
 
-                        width: 100%;
-                        max-width: 900px;
-                }
+            align-items: center;
 
-                /* IMAGE */
+            justify-content: center;
 
-                .image-box {
+            padding: 15px;
 
-                        overflow: hidden;
+            background:
+                linear-gradient(
+                    rgba(0, 0, 0, 0.65),
+                    rgba(0, 0, 0, 0.65)
+                ),
+                url('../assets/image/yoga1.jpg');
 
-                        border-radius: 20px;
+            background-size: cover;
 
-                        height: 100%;
+            background-position: center;
+        }
 
-                        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
-                }
 
-                .image-box img {
+        .main-wrapper {
 
-                        width: 100%;
+            width: 100%;
 
-                        height: 100%;
+            max-width: 900px;
+        }
 
-                        min-height: 420px;
 
-                        object-fit: cover;
+        /* IMAGE */
 
-                        transition: 0.5s ease;
-                }
+        .image-box {
 
-                .image-box:hover img {
+            overflow: hidden;
 
-                        transform: scale(1.05);
-                }
+            border-radius: 20px;
 
-                /* CARD */
+            height: 100%;
 
-                .card-box {
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.35);
+        }
 
-                        background: rgba(255, 255, 255, 0.12);
 
-                        backdrop-filter: blur(10px);
+        .image-box img {
 
-                        border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
 
-                        padding: 26px;
+            height: 100%;
 
-                        border-radius: 22px;
+            min-height: 420px;
 
-                        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3);
-                }
+            object-fit: cover;
 
-                /* TITLE */
+            transition: 0.5s ease;
+        }
 
-                .title {
 
-                        font-size: 28px;
+        .image-box:hover img {
 
-                        font-weight: 700;
+            transform: scale(1.05);
+        }
 
-                        text-align: center;
 
-                        color: white;
+        /* CARD */
 
-                        margin-bottom: 5px;
-                }
+        .card-box {
 
-                .title i {
+            background:
+                rgba(255, 255, 255, 0.12);
 
-                        color: #ff914d;
-                }
+            backdrop-filter: blur(10px);
 
-                /* SMALL TEXT */
+            border:
+                1px solid rgba(255, 255, 255, 0.2);
 
-                .small-text {
+            padding: 26px;
 
-                        text-align: center;
+            border-radius: 22px;
 
-                        color: #f1f1f1;
+            box-shadow:
+                0 8px 28px rgba(0, 0, 0, 0.3);
+        }
 
-                        font-size: 13px;
 
-                        margin-bottom: 20px;
-                }
+        /* TITLE */
 
-                /* CLASS INFO */
+        .title {
 
-                .class-info {
+            font-size: 28px;
 
-                        background: rgba(255, 255, 255, 0.12);
+            font-weight: 700;
 
-                        padding: 14px;
+            text-align: center;
 
-                        border-radius: 14px;
+            color: white;
 
-                        margin-bottom: 18px;
+            margin-bottom: 5px;
+        }
 
-                        color: white;
-                }
 
-                .class-info h4 {
+        .title i {
 
-                        font-weight: 700;
+            color: #ff914d;
+        }
 
-                        color: #ffb37b;
-                }
 
-                /* LABEL */
+        /* SMALL TEXT */
 
-                .form-label {
+        .small-text {
 
-                        color: white;
+            text-align: center;
 
-                        font-size: 14px;
+            color: #f1f1f1;
 
-                        font-weight: 500;
+            font-size: 13px;
 
-                        margin-bottom: 6px;
-                }
+            margin-bottom: 20px;
+        }
 
-                /* INPUT */
 
-                .custom-input {
+        /* CLASS INFO */
 
-                        width: 100%;
+        .class-info {
 
-                        height: 44px;
+            background:
+                rgba(255, 255, 255, 0.12);
 
-                        border: none;
+            padding: 14px;
 
-                        outline: none;
+            border-radius: 14px;
 
-                        border-radius: 12px;
+            margin-bottom: 18px;
 
-                        background: rgba(255, 255, 255, 0.95);
+            color: white;
+        }
 
-                        padding: 10px 12px;
 
-                        font-size: 14px;
+        .class-info h4 {
 
-                        transition: 0.3s ease;
-                }
+            font-weight: 700;
 
-                .custom-input:focus {
+            color: #ffb37b;
+        }
 
-                        transform: scale(1.01);
 
-                        box-shadow:
-                                0 0 8px rgba(255, 145, 77, 0.6);
-                }
+        /* LABEL */
 
-                /* BUTTON */
+        .form-label {
 
-                .btn-submit {
+            color: white;
 
-                        width: 100%;
+            font-size: 14px;
 
-                        border: none;
+            font-weight: 500;
 
-                        background:
-                                linear-gradient(45deg, #ff7b54, #ff416c);
+            margin-bottom: 6px;
+        }
 
-                        color: white;
 
-                        padding: 12px;
+        /* INPUT */
 
-                        border-radius: 12px;
+        .custom-input {
 
-                        font-size: 15px;
+            width: 100%;
 
-                        font-weight: 600;
+            height: 44px;
 
-                        margin-top: 10px;
+            border: none;
 
-                        transition: 0.4s ease;
-                }
+            outline: none;
 
-                .btn-submit:hover {
+            border-radius: 12px;
 
-                        transform: translateY(-2px);
+            background:
+                rgba(255, 255, 255, 0.95);
 
-                        box-shadow:
-                                0 6px 18px rgba(255, 65, 108, 0.5);
-                }
+            padding: 10px 12px;
 
-                @media(max-width:768px) {
+            font-size: 14px;
 
-                        .image-box {
-                                margin-bottom: 20px;
-                        }
+            transition: 0.3s ease;
+        }
 
-                        .image-box img {
-                                min-height: 250px;
-                        }
 
-                        .card-box {
-                                padding: 18px;
-                        }
+        .custom-input:focus {
 
-                        .title {
-                                font-size: 22px;
-                        }
-                }
-        </style>
+            transform: scale(1.01);
+
+            box-shadow:
+                0 0 8px rgba(255, 145, 77, 0.6);
+        }
+
+
+        /* SCHEDULE BOX */
+
+        .schedule-box {
+
+            width: 100%;
+
+            min-height: 44px;
+
+            border: none;
+
+            border-radius: 12px;
+
+            background:
+                rgba(255, 255, 255, 0.95);
+
+            padding: 10px 12px;
+
+            font-size: 14px;
+
+            color: #333;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            flex-wrap: wrap;
+        }
+
+
+        /* BUTTON */
+
+        .btn-submit {
+
+            width: 100%;
+
+            border: none;
+
+            background:
+                linear-gradient(
+                    45deg,
+                    #ff7b54,
+                    #ff416c
+                );
+
+            color: white;
+
+            padding: 12px;
+
+            border-radius: 12px;
+
+            font-size: 15px;
+
+            font-weight: 600;
+
+            margin-top: 10px;
+
+            transition: 0.4s ease;
+        }
+
+
+        .btn-submit:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 6px 18px rgba(255, 65, 108, 0.5);
+        }
+
+
+        /* RESPONSIVE */
+
+        @media(max-width:768px) {
+
+            .image-box {
+
+                margin-bottom: 20px;
+            }
+
+
+            .image-box img {
+
+                min-height: 250px;
+            }
+
+
+            .card-box {
+
+                padding: 18px;
+            }
+
+
+            .title {
+
+                font-size: 22px;
+            }
+        }
+
+    </style>
 
 </head>
 
+
 <body>
 
-        <div class="container main-wrapper">
 
-                <div class="row align-items-center g-4">
+<div class="container main-wrapper">
 
-                        <!-- IMAGE -->
+    <div class="row align-items-center g-4">
 
-                        <div class="col-lg-5">
 
-                                <div class="image-box">
+        <!-- =====================================================
+             IMAGE
+        ====================================================== -->
 
-                                        <img src="../assets/image/yoga1.jpg"
-                                                alt="Yoga Image">
+        <div class="col-lg-5">
 
-                                </div>
+            <div class="image-box">
 
-                        </div>
+                <img src="../assets/image/yoga1.jpg"
+                    alt="Yoga Image">
 
-                        <!-- FORM -->
-
-                        <div class="col-lg-7">
-
-                                <div class="card-box">
-
-                                        <div class="title">
-
-
-
-                                                <h2 style="font-size:20px;">🗓️ Book Yoga Class</h2>
-
-                                        </div>
-
-
-
-                                        <!-- MESSAGE -->
-
-                                        <?php if (isset($msg)) { ?>
-
-                                                <div class="alert alert-info">
-
-                                                        <?php echo $msg; ?>
-
-                                                </div>
-
-                                        <?php } ?>
-
-                                        <!-- CLASS INFO -->
-
-                                        <div class="class-info">
-
-
-                                                <p>
-
-                                                        👨‍🏫 Instructor:
-                                                        <?php echo $row['instructor'] ?>
-
-                                                </p>
-
-                                                <p>
-
-                                                        🧘 Level:
-
-                                                        <?php echo $row['level'] ?>
-                                                </p>
-
-                                                <p>
-
-                                                        ⏳ Duration:
-                                                        <?php echo $row['duration'] ?>
-
-                                                </p>
-
-                                                <p>
-
-                                                        💰 Price:
-                                                        <?php echo $row['price'] ?>
-
-                                                </p>
-
-                                                <p>
-    🧾 Total Price: ₹<span id="totalPrice"><?php echo $row['price']; ?></span>
-</p>
-
-                                        </div>
-
-                                        <!-- FORM -->
-
-                                        <form method="POST">
-
-                                                <!-- Date -->
-
-                                                <div class="mb-3">
-
-                                                        <label class="form-label">
-
-                                                                Select Date
-
-                                                        </label>
-
-                                                        <input type="date"
-                                                                name="date"
-                                                                class="custom-input"
-                                                                value="<?= date('Y-m-d'); ?>"
-                                                                required>
-                                                </div>
-
-                                                <!-- Time -->
-
-                                                <div class="mb-3">
-
-                                                        <label class="form-label">
-
-                                                                Select Time
-
-                                                        </label>
-
-                                                        <input type="time"
-                                                                name="time"
-                                                                class="custom-input"
-                                                                value="<?= date('H:i') ?>"
-                                                                required>
-
-                                                </div>
-
-                                                <!-- Seats -->
-
-                                                <div class="mb-3">
-
-                                                        <label class="form-label">
-
-                                                                Seats
-
-                                                        </label>
-
-                                                        <input type="number"
-                                                                name="seats"
-                                                                id="seats"
-                                                                class="custom-input"
-                                                                value="1"
-                                                                min="1"
-                                                                required>
-
-                                                </div>
-
-                                                <!-- BUTTON -->
-
-                                                <button type="submit"
-                                                        name="book_btn"
-                                                        class="btn-submit">
-
-                                                        Confirm Booking
-
-                                                </button>
-
-                                        </form>
-
-                                </div>
-
-                        </div>
-
-                </div>
+            </div>
 
         </div>
 
-        <script>
-    let pricePerSeat = <?php echo $row['price']; ?>;
 
-    document.getElementById("seats").addEventListener("input", function () {
 
-        let seats = parseInt(this.value) || 1;
+        <!-- =====================================================
+             FORM
+        ====================================================== -->
 
-        let totalPrice = seats * pricePerSeat;
+        <div class="col-lg-7">
 
-        document.getElementById("totalPrice").innerText = totalPrice;
-    });
+            <div class="card-box">
+
+
+                <!-- TITLE -->
+
+                <div class="title">
+
+                    <h2 style="font-size:20px;">
+                        🗓️ Book Yoga Class
+                    </h2>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     MESSAGE
+                ================================================== -->
+
+                <?php if (isset($msg)) { ?>
+
+                    <div class="alert alert-info">
+
+                        <?php echo htmlspecialchars($msg); ?>
+
+                    </div>
+
+                <?php } ?>
+
+
+
+                <!-- =================================================
+                     CLASS INFO
+                ================================================== -->
+
+                <div class="class-info">
+
+
+                    <p>
+                        🧘 Class:
+                        <?php
+                        echo htmlspecialchars(
+                            $row['class_name'] ??
+                            $row['name'] ??
+                            'Yoga Class'
+                        );
+                        ?>
+                    </p>
+
+
+                    <p>
+                        👨‍🏫 Instructor:
+                        <?php
+                        echo htmlspecialchars($row['instructor']);
+                        ?>
+                    </p>
+
+
+                    <p>
+                        🧘 Level:
+                        <?php
+                        echo htmlspecialchars($row['level']);
+                        ?>
+                    </p>
+
+
+                    <p>
+                        ⏳ Duration:
+                        <?php
+                        echo htmlspecialchars($row['duration']);
+                        ?>
+                    </p>
+
+
+                    <p>
+                        💰 Price:
+                        ₹<?php
+                        echo htmlspecialchars($row['price']);
+                        ?>
+                    </p>
+
+
+                    <p>
+                        🧾 Total Price:
+                        ₹<span id="totalPrice">
+                            <?php echo htmlspecialchars($row['price']); ?>
+                        </span>
+                    </p>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     BOOKING FORM
+                ================================================== -->
+
+                <form method="POST">
+
+
+                    <!-- =================================================
+                         CLASS SCHEDULE
+                    ================================================== -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Class Schedule
+
+                        </label>
+
+
+                        <div class="schedule-box">
+
+                            📅
+
+                            <?php
+                            echo date(
+                                'd M Y',
+                                strtotime($row['schedule_date'])
+                            );
+                            ?>
+
+
+                            <span>|</span>
+
+
+                            ⏰
+
+                            <?php
+                            echo date(
+                                'h:i A',
+                                strtotime($row['start_time'])
+                            );
+                            ?>
+
+                            -
+
+                            <?php
+                            echo date(
+                                'h:i A',
+                                strtotime($row['end_time'])
+                            );
+                            ?>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         SEATS
+                    ================================================== -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Seats
+
+                        </label>
+
+
+                        <input type="number"
+                            name="seats"
+                            id="seats"
+                            class="custom-input"
+                            value="1"
+                            min="1"
+                            required>
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         CONFIRM BUTTON
+                    ================================================== -->
+
+                    <button type="submit"
+                        name="book_btn"
+                        class="btn-submit">
+
+                        Confirm Booking
+
+                    </button>
+
+
+                </form>
+
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     TOTAL PRICE SCRIPT
+========================================================= -->
+
+<script>
+
+    let pricePerSeat =
+        <?php echo floatval($row['price']); ?>;
+
+
+    document
+        .getElementById("seats")
+        .addEventListener("input", function () {
+
+
+            let seats =
+                parseInt(this.value) || 1;
+
+
+            let totalPrice =
+                seats * pricePerSeat;
+
+
+            document
+                .getElementById("totalPrice")
+                .innerText = totalPrice;
+
+        });
+
 </script>
+
 
 </body>
 

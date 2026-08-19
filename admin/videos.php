@@ -108,6 +108,8 @@ $result = mysqli_query($conn, $sql);
 
         /* Video Card */
 
+        
+
         .video-card {
             background: white;
             border-radius: 18px;
@@ -159,8 +161,9 @@ $result = mysqli_query($conn, $sql);
         }
 
         .video-title {
-            font-size: 16px;
+            font-size: 26px;
             font-weight: 600;
+          
             color: #222;
             margin-bottom: 8px;
             line-height: 1.5;

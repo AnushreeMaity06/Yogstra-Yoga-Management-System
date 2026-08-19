@@ -930,7 +930,7 @@ if (!$feedback_result) {
                 ?>
 
                         <div class="single-feedback">
-
+<!-- 
                             <div class="feedback-user">
 
                                 <?php if (!empty($feedback['image'])) { ?>
@@ -981,7 +981,26 @@ if (!$feedback_result) {
 
                                 </div>
 
-                            </div>
+                            </div> -->
+
+                            <div class="feedback-user">
+
+    <div>
+        <h5>
+            <?php echo htmlspecialchars($feedback['name']); ?>
+        </h5>
+
+        <small>
+            <?php
+            echo date(
+                'd M Y',
+                strtotime($feedback['created_at'])
+            );
+            ?>
+        </small>
+    </div>
+
+</div>
 
 
                             <p class="feedback-message">
@@ -1026,7 +1045,7 @@ if (!$feedback_result) {
 
 </div>
 
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

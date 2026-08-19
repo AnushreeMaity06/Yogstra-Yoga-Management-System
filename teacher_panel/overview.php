@@ -30,17 +30,20 @@ $total_classes = $class_data['total_classes'] ?? 0;
 
 
 // =========================
-// Total Bookings for Teacher's Classes
+// Total Seats Booked
+// for Teacher's Assigned Classes
 // =========================
-$booking_sql = "SELECT COUNT(*) AS total_bookings
+
+$booking_sql = "SELECT COALESCE(SUM(b.seats), 0) AS total_seats_booked
                 FROM booking b
-                INNER JOIN classes c ON b.class_id = c.id
+                INNER JOIN classes c 
+                    ON b.class_id = c.id
                 WHERE c.teacher_id = '$teacher_id'";
 
 $booking_result = $conn->query($booking_sql);
 $booking_data = $booking_result->fetch_assoc();
 
-$total_bookings = $booking_data['total_bookings'] ?? 0;
+$total_seats_booked = $booking_data['total_seats_booked'] ?? 0;
 ?>
 
 <!DOCTYPE html>
@@ -295,7 +298,7 @@ $total_bookings = $booking_data['total_bookings'] ?? 0;
     </div>
 
 
-    <!-- Total Bookings -->
+    <!-- Total Bookings
     <div class="col-md-6">
         <div class="card-custom">
 
@@ -306,7 +309,7 @@ $total_bookings = $booking_data['total_bookings'] ?? 0;
             <h6>Total Bookings</h6>
 
             <h3>
-                <?php echo $total_bookings; ?>
+                <?php echo $total_seats_booked; ?>
             </h3>
 
             <span class="text-muted">
@@ -314,7 +317,7 @@ $total_bookings = $booking_data['total_bookings'] ?? 0;
             </span>
 
         </div>
-    </div>
+    </div> -->
 
 </div>
 
