@@ -452,19 +452,63 @@ Team
 <?php
 
 
-if(isset($_SESSION['user_id'])){
+// if(isset($_SESSION['user_id'])){
 
 
-$image = !empty($_SESSION['user_image']) 
-? $_SESSION['user_image'] 
-: 'default.png';
+// $image = !empty($_SESSION['user_image']) 
+// ? $_SESSION['user_image'] 
+// : 'default.png';
 
 
 
-$role=$_SESSION['role'] ?? '';
+// $role=$_SESSION['role'] ?? '';
 
-?>
+// if (isset($_SESSION['user_id'])) {
 
+//     $user_name = $_SESSION['user_name'] ?? 'User';
+//     $role = $_SESSION['role'] ?? '';
+
+// ?>
+<?php
+if (isset($_SESSION['user_id'])) {
+
+    $role = $_SESSION['role'] ?? '';
+
+
+    // =========================
+    // GET USER NAME
+    // =========================
+
+    $user_name = trim($_SESSION['user_name'] ?? 'User');
+
+    $name_parts = preg_split('/\s+/', $user_name);
+
+
+    // =========================
+    // CREATE INITIALS
+    // =========================
+
+if (count($name_parts) >= 2) {
+
+        $first_letter = substr($name_parts[0], 0, 1);
+
+        $last_letter = substr(
+            $name_parts[count($name_parts) - 1],
+            0,
+            1
+        );
+
+        $initials = strtoupper(
+            $first_letter . $last_letter
+        );
+
+    } else {
+
+        $initials = strtoupper(
+            substr($name_parts[0], 0, 1)
+        );
+    }
+    ?>
 
 
 
@@ -482,9 +526,23 @@ data-bs-toggle="dropdown">
 
 <!-- <img src="../images/<?php echo $row['image'] ?? 'default.png'; ?>"
      class="profile-img"> -->
-     <img src="images/<?php echo htmlspecialchars($image); ?>"
+     <!-- <img src="images/<?php echo htmlspecialchars($image); ?>"
              class="profile-img"
-             alt="Profile">
+             alt="Profile"> -->
+<!-- 
+             <span style="
+            font-size:16px;
+            font-weight:600;
+            color:#333;
+            cursor:pointer;
+        ">
+            <?php echo htmlspecialchars($user_name); ?>
+        </span> -->
+
+
+        <div class="profile-avatar">
+            <?php echo htmlspecialchars($initials); ?>
+        </div>
 
 
 </a>
