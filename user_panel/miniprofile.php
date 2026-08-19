@@ -421,7 +421,8 @@ if (!$row) {
                             <!-- LEFT -->
                             <div class="col-md-4 profile-left">
 
-                                <img src="./uploads/image/?php echo $row['image'] ?? 'default.png'; ?>" class="profile-img">
+                                <img src="../uploads/image/?php echo $row['image'] ?? 'default.png'; ?>" class="profile-img">
+                                <!-- C:\xampp\htdocs\yogstra\uploads\image\1787125138_Anushree.png -->
 
                                 <h2 class="welcome">
                                     <?php echo $_SESSION['user_name']; ?>
