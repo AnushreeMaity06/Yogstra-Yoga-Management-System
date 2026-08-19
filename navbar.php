@@ -480,8 +480,11 @@ href="#"
 data-bs-toggle="dropdown">
 
 
-<img src="../images/<?php echo $row['image'] ?? 'default.png'; ?>"
-     class="profile-img">
+<!-- <img src="../images/<?php echo $row['image'] ?? 'default.png'; ?>"
+     class="profile-img"> -->
+     <img src="images/<?php echo htmlspecialchars($image); ?>"
+             class="profile-img"
+             alt="Profile">
 
 
 </a>
