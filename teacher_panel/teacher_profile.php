@@ -475,7 +475,7 @@ if (!$row) {
                                 </div>
 
                                 <!-- GENDER -->
-                                <div class="info-box">
+                                <!-- <div class="info-box">
 
                                     <div class="info-icon">
                                         <i class="fa-solid fa-user"></i>
@@ -489,7 +489,7 @@ if (!$row) {
                                         </span>
                                     </div>
 
-                                </div>
+                                </div> -->
 
                                 <!-- PHONE -->
                                 <div class="info-box">
