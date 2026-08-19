@@ -136,8 +136,8 @@ if (!$row) {
 
         /* IMAGE */
         .profile-img {
-            width: 150px;
-            height: 150px;
+            width: 190px;
+            height: 190px;
 
             border-radius: 30px;
 
