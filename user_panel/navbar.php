@@ -212,12 +212,12 @@ if (isset($_SESSION['user_id'])) {
 
                   <li>
 
-                    <!-- <a class="dropdown-item"
+                    <a class="dropdown-item"
                       href="miniprofile.php">
 
                       My Profile
 
-                    </a> -->
+                    </a>
 
                   </li>
 
