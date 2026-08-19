@@ -37,14 +37,26 @@ if (isset($_POST['update'])) {
 
 
     // IF NEW IMAGE SELECTED==============
-    if (!empty($image_name)) {
-        $old_image = time() . '_' . $image_name;
+    // if (!empty($image_name)) {
+    //     $old_image = time() . '_' . $image_name;
 
-        move_uploaded_file(
-            $tmp_name,
-            "../images/" . $old_image
-        );
+    //     move_uploaded_file(
+    //         $tmp_name,
+    //         "../images/" . $old_image
+    //     );
+    // }
+
+    if (!empty($_FILES['image']['name'])) {
+
+    $image_name = $_FILES['image']['name'];
+    $tmp_name = $_FILES['image']['tmp_name'];
+
+    $new_image = time() . '_' . $image_name;
+
+    if (move_uploaded_file($tmp_name, "../images/" . $new_image)) {
+        $old_image = $new_image;
     }
+}
 
 
     $update = "UPDATE `users` SET
@@ -268,9 +280,12 @@ if (isset($_POST['update'])) {
             <br><br>
 
             <!-- BUTTON -->
-            <button name="update" class="update-btn">
+            <!-- <button name="update" class="update-btn">
                 Update Profile
-            </button>
+            </button> -->
+            <button type="submit" name="update" class="update-btn">
+    Update Profile
+</button>
 
         </form>
 
