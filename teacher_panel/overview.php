@@ -10,6 +10,37 @@ session_start();
 // }
 
 $active = 'overview';
+
+
+// Logged-in teacher ID
+$teacher_id = $_SESSION['user_id'] ?? 0;
+
+
+// =========================
+// Total Classes of Teacher
+// =========================
+$class_sql = "SELECT COUNT(*) AS total_classes
+              FROM classes
+              WHERE teacher_id = '$teacher_id'";
+
+$class_result = $conn->query($class_sql);
+$class_data = $class_result->fetch_assoc();
+
+$total_classes = $class_data['total_classes'] ?? 0;
+
+
+// =========================
+// Total Bookings for Teacher's Classes
+// =========================
+$booking_sql = "SELECT COUNT(*) AS total_bookings
+                FROM booking b
+                INNER JOIN classes c ON b.class_id = c.id
+                WHERE c.teacher_id = '$teacher_id'";
+
+$booking_result = $conn->query($booking_sql);
+$booking_data = $booking_result->fetch_assoc();
+
+$total_bookings = $booking_data['total_bookings'] ?? 0;
 ?>
 
 <!DOCTYPE html>
@@ -236,11 +267,58 @@ $active = 'overview';
                         <p>
                             Manage your yoga classes, students, bookings and revenue easily.
                         </p>
+
                     </div>
 
+<!-- Dashboard Statistics -->
+<div class="row g-4 mb-4">
 
+    <!-- Total Classes -->
+    <div class="col-md-6">
+        <div class="card-custom">
+
+            <div class="icon-box">
+                <i class="fa-solid fa-person-chalkboard"></i>
+            </div>
+
+            <h6>My Classes</h6>
+
+            <h3>
+                <?php echo $total_classes; ?>
+            </h3>
+
+            <span class="text-muted">
+                Classes assigned to you
+            </span>
+
+        </div>
+    </div>
+
+
+    <!-- Total Bookings -->
+    <div class="col-md-6">
+        <div class="card-custom">
+
+            <div class="icon-box">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+
+            <h6>Total Bookings</h6>
+
+            <h3>
+                <?php echo $total_bookings; ?>
+            </h3>
+
+            <span class="text-muted">
+                Bookings for your classes
+            </span>
+
+        </div>
+    </div>
 
 </div>
+
+    </div>
                 </div>
 
             </div>
